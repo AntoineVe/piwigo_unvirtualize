@@ -11,12 +11,14 @@ have duplicates pictures, because they were in multiple categories.
 import argparse
 import logging
 import os
+from sys import exit
 import shutil
 
 try:
     import mysql.connector
 except:
-    print("Mysql connector was not loaded. Is it installed ?")
+    logging.error("Mysql connector was not loaded. Is it installed ?")
+    exit()
 
 __docformat__ = 'restructuredtext en'
 
@@ -70,13 +72,27 @@ if __name__ == '__main__':
     parser.add_argument('user', action="store", help="MySQL user")
     parser.add_argument('pass', action="store", help="MySQL password")
     parser.add_argument('db', action="store", help="MySQL database")
-    parser.add_argument('from', action="store", help="Piwigo upload directory")
-    parser.add_argument('to', action="store", help="Directory for the new gallery")
+    parser.add_argument('from', action="store", help="Piwigo upload directory (end with \"/\")")
+    parser.add_argument('to', action="store", help="Directory for the new gallery (end with \"/\")")
     parser.add_argument('-v', '--verbose', action="store_true", help="Verbose output")
     args = parser.parse_args()
     settings = vars(args)
     if args.verbose:
         logging.basicConfig(format='[%(asctime)s] %(message)s',level=logging.INFO)
+    else:
+        logging.basicConfig(format='[%(asctime)s] %(message)s',level=logging.ERROR)
+    if settings['from'][-1] != "/":
+        logging.error("Please add trailing slash in directory URI")
+        exit()
+    if settings['to'][-1] != "/":
+        logging.error("Please add trailing slash in directory URI")
+        exit()
+    if not os.path.exists(settings['from']):
+        logging.error("Directory " + settings['from'] + " not found !")
+        exit()
+    if not os.path.exists(settings['to']):
+        logging.error("Directory " + settings['to'] + " not found !")
+        exit()
     db_infos = (settings['user'], settings['pass'], settings['host'], settings['db'])
     photos_list = get_photo_list(db_infos)
     create_gallery(photos_list, settings['from'], settings['to'])
