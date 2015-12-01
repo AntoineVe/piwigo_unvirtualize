@@ -76,5 +76,6 @@ if __name__ == '__main__':
         logging.basicConfig(format='[%(asctime)s] %(message)s',level=logging.INFO)
     db_infos = (settings['user'], settings['pass'], settings['host'], settings['db'])
     photos_list = get_photo_list(db_infos)
+    create_gallery(photos_list, settings['from'], settings['to'])
 
 # vim:set et sts=4 ts=4 tw=80:
