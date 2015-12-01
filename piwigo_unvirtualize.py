@@ -58,8 +58,11 @@ def create_gallery(photos_list, srvdir, destdir):
         directory = os.path.dirname(tofile)
         if not os.path.exists(directory):
             os.makedirs(directory)
-        logging.info("Copy " + fromfile + " to " + tofile)
-        shutil.copy(fromfile, tofile, follow_symlinks=False)
+        try:
+            shutil.copy(fromfile, tofile, follow_symlinks=False)
+            logging.info("Copied " + fromfile + " to " + tofile)
+        except:
+            logging.error("/!\ Unable to copy " + fromfile)
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description=__doc__)
