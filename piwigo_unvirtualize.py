@@ -13,13 +13,15 @@ try:
 except:
     print("Mysql connector was not loaded. Is it installed ?")
 
-def db_query(dbname, user, password, host, query):
+__docformat__ = 'restructuredtext en'
+
+def db_query(db_infos, query):
     result = []
     cnx = mysql.connector.connect(
-            user=user,
-            password=password,
-            host=host,
-            database=dbname
+            user=db_infos[0],
+            password=db_infos[1],
+            host=db_infos[2],
+            database=db_infos[3]
             )
     cur = cnx.cursor()
     cur.execute(query)
@@ -27,4 +29,6 @@ def db_query(dbname, user, password, host, query):
         result.append(item)
     cnx.close()
     return(result)
+
+#def get_photo_list(db_infos):
 
