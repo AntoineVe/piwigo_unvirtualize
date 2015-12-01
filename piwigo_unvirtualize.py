@@ -36,6 +36,7 @@ def db_query(db_infos, query):
     return(result)
 
 def get_photo_list(db_infos):
+    i = 0
     photos_list = []
     all_pictures = db_query(db_infos, "SELECT `image_id`, `category_id` FROM `piwigo_image_category`")
     logging.info("Creating pictures list (" + str(len(all_pictures)) + " pictures in database)")
@@ -44,6 +45,10 @@ def get_photo_list(db_infos):
         file_info = db_query(db_infos, "SELECT `file`, `path` FROM `piwigo_images` WHERE `id` = " + str(item[0]))
         if file_info != []:
             photos_list.append((category_name[0][0], file_info[0][0].decode(), file_info[0][1]))
+        i = i+1
+        percent_done = ((i * 100) / int(len(all_pictures)))
+        if i % 100 == 0:
+            logging.info(str(round(percent_done, 2)) + "% done...")
     return(photos_list)
 
 def create_gallery(photos_list, srvdir, destdir):
@@ -68,7 +73,7 @@ if __name__ == '__main__':
     args = parser.parse_args()
     settings = vars(args)
     if args.verbose:
-        logging.basicConfig(format='%(message)s',level=logging.INFO)
+        logging.basicConfig(format='[%(asctime)s] %(message)s',level=logging.INFO)
     db_infos = (settings['user'], settings['pass'], settings['host'], settings['db'])
     photos_list = get_photo_list(db_infos)
 
