@@ -17,6 +17,7 @@ import shutil
 try:
     import mysql.connector
 except:
+    logging.basicConfig(format='[%(asctime)s] %(message)s',level=logging.ERROR)
     logging.error("Mysql connector was not loaded. Is it installed ?")
     exit()
 
